@@ -1,11 +1,19 @@
 import Producto from "./producto.js";
 
+
+
 //variables globales
 let productos = []
 let formProducto = document.getElementById('convertidorPrecios')
 let btnLimpiar = document.getElementById('btnLimpiar')
 let listadoProductos = document.getElementById('listadoProductos')
-
+let dolarSolidario = 
+    fetch('https://criptoya.com/api/dolar')
+    .then((promesa) => promesa.json())
+    .then(data => {
+      let {solidario} = data
+      dolarSolidario = `${solidario}`
+    })
 
 //Agrego el array de productos al local storage
 localStorage.getItem('Productos') ? productos = JSON.parse(localStorage.getItem('Productos')) : localStorage.setItem('Productos', JSON.stringify(productos))
@@ -17,7 +25,7 @@ formProducto = addEventListener('submit', (e) => {
     
     let producto = document.getElementById('IDproducto').value
     let precioEnDolares = document.getElementById('IDprecioEnDolares').value
-    let precioEnPesos = parseFloat(precioEnDolares) * 114 * 1.35 * 1.30
+    let precioEnPesos = parseFloat(precioEnDolares) * dolarSolidario
     
     
     const product = new Producto(producto, precioEnDolares, precioEnPesos)
