@@ -22,69 +22,74 @@ localStorage.getItem('Productos') ? productos = JSON.parse(localStorage.getItem(
 
 
 //mostrar listado de productos guardados
+if (productos.length) {
+  
 listadoProductos.innerHTML = ""
    
 productos.forEach((productosEnArray, indice, array) => {
-  console.log(array)    
+     
               
   listadoProductos.insertAdjacentHTML("beforeend", ` <li id="producto${indice}" class="list-group-item">
     Nombre: ${productosEnArray.producto} - 
     US$ ${productosEnArray.precioEnDolares}  => 
-    $ ${productosEnArray.precioEnPesos}</li>`) 
-      
+    $ ${productosEnArray.precioEnPesos.toFixed(2)}</li>`) 
+     
 })
+}
+
+
 
 //Acciones al enviar la forma
 formProducto = addEventListener('submit', (e) => {
-    e.preventDefault()
-    
-    
-    let producto = document.getElementById('IDproducto').value
-    let precioEnDolares = document.getElementById('IDprecioEnDolares').value
-    let precioEnPesos
-    
+  e.preventDefault()
   
-    precioEnPesos = precioEnDolares < 50 ?  parseFloat(precioEnDolares) * dolarSolidario + tasaCorreo : (parseFloat(precioEnDolares) + (parseFloat(precioEnDolares) - 50) * 0.5) * dolarSolidario + tasaCorreo
-    
-    
-    
-    const product = new Producto(producto, precioEnDolares, precioEnPesos)
-    productos.push(product)
-    localStorage.setItem('Productos', JSON.stringify(productos))
-    document.getElementById('convertidorPrecios').reset()
-    
+  
+  let producto = document.getElementById('IDproducto').value
+  let precioEnDolares = document.getElementById('IDprecioEnDolares').value
+  let precioEnPesos
+  
+
+  precioEnPesos = precioEnDolares < 50 ?  parseFloat(precioEnDolares) * dolarSolidario + tasaCorreo : (parseFloat(precioEnDolares) + (parseFloat(precioEnDolares) - 50) * 0.5) * dolarSolidario + tasaCorreo
+  
+  
+  
+  const product = new Producto(producto, precioEnDolares, precioEnPesos)
+  productos.push(product)
+  localStorage.setItem('Productos', JSON.stringify(productos))
+  document.getElementById('convertidorPrecios').reset()
+  
 
 
-    //mostrar listado de productos cargados en pantalla 
-    listadoProductos.innerHTML = ""
-   
-    productos.forEach((productosEnArray, indice, array) => {
-        console.log(array)    
-              
-      listadoProductos.insertAdjacentHTML("beforeend", ` <li id="producto${indice}" class="list-group-item">
-        Nombre: ${productosEnArray.producto} - 
-        US$${productosEnArray.precioEnDolares} =>
-        $${productosEnArray.precioEnPesos}</li>`) 
+  //mostrar listado de productos cargados en pantalla 
+  listadoProductos.innerHTML = ""
+  
+  productos.forEach((productosEnArray, indice, array) => {
       
-      })
-      
-      //toast de producto cargado correctamente
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-      })
-              
-      Toast.fire({
-        icon: 'success',
-        title: 'Producto convertido y agregado correctamente'
-        })
+            
+    listadoProductos.insertAdjacentHTML("beforeend", ` <li id="producto${indice}" class="list-group-item">
+      Nombre: ${productosEnArray.producto} - 
+      US$${productosEnArray.precioEnDolares} =>
+      $${productosEnArray.precioEnPesos.toFixed(2)}</li>`) 
+    
+    })
+    
+  //toast de producto cargado correctamente
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
+          
+  Toast.fire({
+    icon: 'success',
+    title: 'Producto convertido y agregado correctamente'
+  })
 
 })
 
