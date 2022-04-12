@@ -7,6 +7,7 @@ let productos = []
 let formProducto = document.getElementById('convertidorPrecios')
 let btnLimpiar = document.getElementById('btnLimpiar')
 let listadoProductos = document.getElementById('listadoProductos')
+let tasaCorreo = 140
 let dolarSolidario = 
     fetch('https://criptoya.com/api/dolar')
     .then((promesa) => promesa.json())
@@ -15,17 +16,36 @@ let dolarSolidario =
       dolarSolidario = `${solidario}`
     })
 
+
 //Agrego el array de productos al local storage
 localStorage.getItem('Productos') ? productos = JSON.parse(localStorage.getItem('Productos')) : localStorage.setItem('Productos', JSON.stringify(productos))
 
+
+//mostrar listado de productos guardados
+listadoProductos.innerHTML = ""
+   
+productos.forEach((productosEnArray, indice, array) => {
+  console.log(array)    
+              
+  listadoProductos.insertAdjacentHTML("beforeend", ` <li id="producto${indice}" class="list-group-item">
+    Nombre: ${productosEnArray.producto} - 
+    US$ ${productosEnArray.precioEnDolares}  => 
+    $ ${productosEnArray.precioEnPesos}</li>`) 
+      
+})
 
 //Acciones al enviar la forma
 formProducto = addEventListener('submit', (e) => {
     e.preventDefault()
     
+    
     let producto = document.getElementById('IDproducto').value
     let precioEnDolares = document.getElementById('IDprecioEnDolares').value
-    let precioEnPesos = parseFloat(precioEnDolares) * dolarSolidario
+    let precioEnPesos
+    
+  
+    precioEnPesos = precioEnDolares < 50 ?  parseFloat(precioEnDolares) * dolarSolidario + tasaCorreo : (parseFloat(precioEnDolares) + (parseFloat(precioEnDolares) - 50) * 0.5) * dolarSolidario + tasaCorreo
+    
     
     
     const product = new Producto(producto, precioEnDolares, precioEnPesos)
@@ -41,9 +61,10 @@ formProducto = addEventListener('submit', (e) => {
     productos.forEach((productosEnArray, indice, array) => {
         console.log(array)    
               
-      listadoProductos.insertAdjacentHTML("beforeend", ` <li id="producto${indice}" class="list-group-item">Producto nº: ${indice + 1} - 
+      listadoProductos.insertAdjacentHTML("beforeend", ` <li id="producto${indice}" class="list-group-item">
         Nombre: ${productosEnArray.producto} - 
-        Precio en pesos: $${productosEnArray.precioEnPesos}</li>`) 
+        US$${productosEnArray.precioEnDolares} =>
+        $${productosEnArray.precioEnPesos}</li>`) 
       
       })
       
@@ -90,16 +111,27 @@ btnLimpiar.addEventListener('click', () => {
         Swal.fire('No se eliminaron los productos', '', 'info')
         }
       })
-    
      
-    
-
-    
-    
 })
 
 
-
+// cotizacion del dolar
+fetch('https://criptoya.com/api/dolar')
+    .then((promesa) => promesa.json())
+    .then(data => {
+    let {oficial, solidario, mep, megd30, ccl, cclgd30, ccb, blue} = data
+    divDolar.innerHTML = `
+    <p>Oficial: $${oficial}</p>
+    <p>Solidario: $${solidario}</p>
+    <p>Dolar MEP: $${mep}</p>
+    
+    <p>Contado con Liquidacion: $${ccl}</p>
+    <p>Contado con Liqui(GD30): $${cclgd30}</p>
+    <p>Contado con Bitcoin: $${ccb}</p>
+    <p>Blue: $${blue}</p>
+    
+    `
+  })
 
 
 
